@@ -6,6 +6,18 @@
 // your Vercel project (Settings -> Environment Variables).
 
 export default async function handler(req, res) {
+  // Allow cross-origin requests and handle the browser's preflight
+  // OPTIONS request, which was previously being rejected with a 405
+  // and silently breaking the chat feature.
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
